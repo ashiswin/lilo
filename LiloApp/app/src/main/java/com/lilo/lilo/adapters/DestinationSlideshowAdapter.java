@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.lilo.lilo.R;
+import com.lilo.lilo.views.TouchImageView;
 
 /**
  * Created by ashis on 11/24/2017.
@@ -47,7 +48,7 @@ public class DestinationSlideshowAdapter extends PagerAdapter {
             @Override
             public void onClick(View v) {
                 Dialog dialog = new Dialog(context, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
-                ImageView viewer = new ImageView(context);
+                TouchImageView viewer = new TouchImageView(context);
                 viewer.setImageBitmap(sources[position]);
                 dialog.setContentView(viewer);
 
