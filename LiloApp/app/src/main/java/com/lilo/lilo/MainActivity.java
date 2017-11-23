@@ -1,9 +1,12 @@
 package com.lilo.lilo;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,10 +20,20 @@ import android.view.MenuItem;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     MainApplication m;
+    DestinationFragment destinationFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +46,9 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        destinationFragment = DestinationFragment.newInstance();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.lytContent, DestinationFragment.newInstance()).commit();
+        fragmentManager.beginTransaction().replace(R.id.lytContent, destinationFragment).commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -72,7 +86,39 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_search) {
+            return true;
+        }
+        if (id == R.id.action_sort) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Sort by");
+            String[] modes = {"A-Z", "Z-A", "Popularity"};
+            builder.setItems(modes, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    Log.d("MainActivity", which + "");
+                    switch(which){
+                        case 0:
+                            try {
+                                if(destinationFragment == null) return;
+                                destinationFragment.sortAZ();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        case 1:
+                            try {
+                                if(destinationFragment == null) return;
+                                destinationFragment.sortZA();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
+                }
+            });
+            builder.show();
             return true;
         }
 
@@ -86,8 +132,12 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_destinations) {
+            if(destinationFragment == null) {
+                destinationFragment = DestinationFragment.newInstance();
+            }
+
             FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.lytContent, DestinationFragment.newInstance()).commit();
+            fragmentManager.beginTransaction().replace(R.id.lytContent, destinationFragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

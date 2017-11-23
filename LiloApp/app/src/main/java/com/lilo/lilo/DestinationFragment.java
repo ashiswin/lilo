@@ -18,9 +18,13 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.lilo.lilo.adapters.DestinationAdapter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 
@@ -92,4 +96,76 @@ public class DestinationFragment extends Fragment {
         return rootView;
     }
 
+    public void sortAZ() throws JSONException {
+        JSONArray jsonArr = ((DestinationAdapter) adapter).data;
+        JSONArray sortedJsonArray = new JSONArray();
+
+        List<JSONObject> jsonValues = new ArrayList<>();
+        for (int i = 0; i < jsonArr.length(); i++) {
+            jsonValues.add(jsonArr.getJSONObject(i));
+        }
+        Collections.sort( jsonValues, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA = new String();
+                String valB = new String();
+
+                try {
+                    valA = (String) a.get("name");
+                    valB = (String) b.get("name");
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return valA.compareTo(valB);
+            }
+        });
+
+        for (int i = 0; i < jsonArr.length(); i++) {
+            sortedJsonArray.put(jsonValues.get(i));
+        }
+
+        ((DestinationAdapter) adapter).data = sortedJsonArray;
+        adapter.notifyDataSetChanged();
+    }
+
+    public void sortZA() throws JSONException {
+        JSONArray jsonArr = ((DestinationAdapter) adapter).data;
+        JSONArray sortedJsonArray = new JSONArray();
+
+        List<JSONObject> jsonValues = new ArrayList<>();
+        for (int i = 0; i < jsonArr.length(); i++) {
+            jsonValues.add(jsonArr.getJSONObject(i));
+        }
+        Collections.sort( jsonValues, new Comparator<JSONObject>() {
+            //You can change "Name" with "ID" if you want to sort by ID
+            private static final String KEY_NAME = "name";
+
+            @Override
+            public int compare(JSONObject a, JSONObject b) {
+                String valA = new String();
+                String valB = new String();
+
+                try {
+                    valA = (String) a.get(KEY_NAME);
+                    valB = (String) b.get(KEY_NAME);
+                }
+                catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                return valB.compareTo(valA);
+            }
+        });
+
+        for (int i = 0; i < jsonArr.length(); i++) {
+            sortedJsonArray.put(jsonValues.get(i));
+        }
+
+        ((DestinationAdapter) adapter).data = sortedJsonArray;
+        adapter.notifyDataSetChanged();
+
+        Log.d("DestinationFragment", ((DestinationAdapter) adapter).data.toString());
+    }
 }

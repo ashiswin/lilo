@@ -25,8 +25,8 @@ import org.json.JSONObject;
  */
 
 public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.ViewHolder> {
-    JSONArray data;
-    Context context;
+    public JSONArray data;
+    public Context context;
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public TextView txtName;
