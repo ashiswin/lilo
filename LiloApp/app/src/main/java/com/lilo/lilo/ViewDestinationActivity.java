@@ -85,6 +85,8 @@ public class ViewDestinationActivity extends AppCompatActivity {
                         JSONArray images = result.getJSONArray("images");
                         if(images.length() == 0) {
                             pgrSlideshow.setVisibility(View.GONE);
+                            btnLeftNav.setVisibility(View.GONE);
+                            btnRightNav.setVisibility(View.GONE);
                             return;
                         }
                         Bitmap[] sources = new Bitmap[images.length()];
