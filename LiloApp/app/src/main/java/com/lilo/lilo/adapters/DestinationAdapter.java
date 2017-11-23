@@ -50,6 +50,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                         viewDestinationIntent.putExtra("lon", destination.getString("lon"));
                         viewDestinationIntent.putExtra("name", destination.getString("name"));
                         viewDestinationIntent.putExtra("details", destination.getString("details"));
+                        viewDestinationIntent.putExtra("id", destination.getInt("id"));
                         context.startActivity(viewDestinationIntent);
                     } catch (JSONException e) {
                         e.printStackTrace();

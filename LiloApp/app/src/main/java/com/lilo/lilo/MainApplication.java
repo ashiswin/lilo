@@ -9,6 +9,6 @@ import com.android.volley.RequestQueue;
  */
 
 public class MainApplication extends Application {
-    public static final String SERVER_URL = "http://devostrum.no-ip.info/lilo-backend";
+    public final String SERVER_URL = "http://devostrum.no-ip.info/lilo-backend";
     RequestQueue queue;
 }
