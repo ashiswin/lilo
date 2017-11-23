@@ -31,6 +31,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         public TextView txtName;
         public ImageView imgThumbnail;
         public View layout;
+        public int position;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -43,7 +44,16 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
                 @Override
                 public void onClick(View v) {
                     Intent viewDestinationIntent = new Intent(context, ViewDestinationActivity.class);
-                    context.startActivity(viewDestinationIntent);
+                    try {
+                        JSONObject destination = data.getJSONObject(position);
+                        viewDestinationIntent.putExtra("lat", destination.getString("lat"));
+                        viewDestinationIntent.putExtra("lon", destination.getString("lon"));
+                        viewDestinationIntent.putExtra("name", destination.getString("name"));
+                        viewDestinationIntent.putExtra("details", destination.getString("details"));
+                        context.startActivity(viewDestinationIntent);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         }
@@ -68,6 +78,7 @@ public class DestinationAdapter extends RecyclerView.Adapter<DestinationAdapter.
         try {
             JSONObject destination = data.getJSONObject(position);
             holder.txtName.setText(destination.getString("name"));
+            holder.position = position;
 
             if(destination.getString("thumbnail").isEmpty()) return;
 
