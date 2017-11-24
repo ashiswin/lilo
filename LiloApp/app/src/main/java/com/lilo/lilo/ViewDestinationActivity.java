@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,9 +35,10 @@ public class ViewDestinationActivity extends AppCompatActivity {
     MainApplication m;
 
     MapView mapDestination;
-    TextView txtDetails;
+    TextView txtDetails, txtPhotoTitle, txtEventTitle;
     ViewPager pgrSlideshow;
     ImageButton btnLeftNav, btnRightNav;
+    ListView lstEvents;
 
     DestinationSlideshowAdapter adapter;
 
@@ -55,6 +57,9 @@ public class ViewDestinationActivity extends AppCompatActivity {
         pgrSlideshow = (ViewPager) findViewById(R.id.pgrSlideshow);
         btnLeftNav = (ImageButton) findViewById(R.id.btnLeftNav);
         btnRightNav = (ImageButton) findViewById(R.id.btnRightNav);
+        txtPhotoTitle = (TextView) findViewById(R.id.txtPhotoTitle);
+        txtEventTitle = (TextView) findViewById(R.id.txtEventTitle);
+        lstEvents = (ListView) findViewById(R.id.lstEvents);
 
         txtDetails.setText(getIntent().getStringExtra("details"));
 
@@ -87,6 +92,7 @@ public class ViewDestinationActivity extends AppCompatActivity {
                             pgrSlideshow.setVisibility(View.GONE);
                             btnLeftNav.setVisibility(View.GONE);
                             btnRightNav.setVisibility(View.GONE);
+                            txtPhotoTitle.setVisibility(View.GONE);
                             return;
                         }
                         Bitmap[] sources = new Bitmap[images.length()];
@@ -135,7 +141,35 @@ public class ViewDestinationActivity extends AppCompatActivity {
             }
         });
 
+        StringRequest eventsRequest = new StringRequest(m.SERVER_URL + "/GetEvents.php?id=" + getIntent().getIntExtra("id", 0), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject result = new JSONObject(response);
+                    if(!result.getBoolean("success")) {
+                        Toast.makeText(ViewDestinationActivity.this, "Failed to load events: " + result.getString("message"), Toast.LENGTH_LONG).show();
+                    }
+                    else {
+                        JSONArray events = result.getJSONArray("events");
+                        if(events.length() == 0) {
+                            lstEvents.setVisibility(View.GONE);
+                            txtEventTitle.setVisibility(View.GONE);
+                            return;
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+
         m.queue.add(imagesRequest);
+        m.queue.add(eventsRequest);
     }
 
     @Override

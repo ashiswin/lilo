@@ -1,6 +1,7 @@
 package com.lilo.lilo;
 
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SupportActivity;
@@ -67,6 +68,12 @@ public class DestinationFragment extends Fragment {
         layoutManager = new LinearLayoutManager(getActivity());
         lstDestinations.setLayoutManager(layoutManager);
 
+        final ProgressDialog dialog = new ProgressDialog(getActivity());
+        dialog.setTitle("Loading destinations");
+        dialog.setMessage("Please wait while we load available destinations");
+        dialog.setCancelable(false);
+        dialog.setIndeterminate(true);
+
         StringRequest destinationRequest = new StringRequest(m.SERVER_URL + "/GetDestinations.php", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -79,6 +86,8 @@ public class DestinationFragment extends Fragment {
                     else {
                         adapter = new DestinationAdapter(result.getJSONArray("destinations"), getActivity());
                         lstDestinations.setAdapter(adapter);
+
+                        dialog.cancel();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -139,7 +148,6 @@ public class DestinationFragment extends Fragment {
             jsonValues.add(jsonArr.getJSONObject(i));
         }
         Collections.sort( jsonValues, new Comparator<JSONObject>() {
-            //You can change "Name" with "ID" if you want to sort by ID
             private static final String KEY_NAME = "name";
 
             @Override
@@ -165,7 +173,5 @@ public class DestinationFragment extends Fragment {
 
         ((DestinationAdapter) adapter).data = sortedJsonArray;
         adapter.notifyDataSetChanged();
-
-        Log.d("DestinationFragment", ((DestinationAdapter) adapter).data.toString());
     }
 }

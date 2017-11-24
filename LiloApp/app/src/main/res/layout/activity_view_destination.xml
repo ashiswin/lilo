@@ -18,18 +18,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:layout_marginLeft="16dp"
+            android:layout_marginLeft="8dp"
             android:textAppearance="?android:textAppearanceLarge"
             android:text="Details"/>
         <TextView
             android:id="@+id/txtDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="112dp"
+            android:minHeight="96dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"/>
 
+        <TextView
+            android:id="@+id/txtPhotoTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Photo Stream"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"/>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -58,5 +66,20 @@
                 android:layout_marginRight="8dp"
                 android:src="@drawable/ic_chevron_right_black_24dp" />
         </FrameLayout>
+        <TextView
+            android:id="@+id/txtEventTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Events"
+            android:textAppearance="?android:textAppearanceLarge"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"/>
+        <ListView
+            android:id="@+id/lstEvents"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"/>
     </LinearLayout>
 </ScrollView>

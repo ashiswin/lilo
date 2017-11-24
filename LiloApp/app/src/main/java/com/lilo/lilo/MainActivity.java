@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity
 
     MainApplication m;
     DestinationFragment destinationFragment;
+    ItineraryFragment itineraryFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,8 +139,19 @@ public class MainActivity extends AppCompatActivity
 
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.lytContent, destinationFragment).commit();
-        }
 
+            getSupportActionBar().setTitle("Destinations");
+        }
+        else if(id == R.id.nav_itinerary) {
+            if(itineraryFragment == null) {
+                itineraryFragment = ItineraryFragment.newInstance();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.lytContent, itineraryFragment).commit();
+
+            getSupportActionBar().setTitle("Itinerary");
+        }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
