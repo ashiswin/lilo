@@ -1,8 +1,10 @@
 package com.lilo.lilo.adapters;
 
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,6 +41,22 @@ public class DestinationEventAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        View itemView;
+
+        if(convertView == null) {
+            LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+            itemView = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
+        }
+        else {
+            itemView = convertView;
+        }
+
+        try {
+            ((TextView) itemView.findViewById(android.R.id.text1)).setText(data.getJSONObject(position).getString("name"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return itemView;
     }
 }

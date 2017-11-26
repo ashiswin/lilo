@@ -2,17 +2,25 @@ package com.lilo.lilo;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.PersistableBundle;
+import android.support.annotation.RequiresApi;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +33,10 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.lilo.lilo.adapters.DestinationEventAdapter;
 import com.lilo.lilo.adapters.DestinationSlideshowAdapter;
+import com.lilo.lilo.model.Destination;
+import com.lilo.lilo.model.ItineraryStorage;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -39,18 +50,25 @@ public class ViewDestinationActivity extends AppCompatActivity {
     ViewPager pgrSlideshow;
     ImageButton btnLeftNav, btnRightNav;
     ListView lstEvents;
+    ScrollView scrScroll;
 
     DestinationSlideshowAdapter adapter;
+    ItineraryStorage storage;
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_destination);
+        setContentView(R.layout.activity_view_destination_wrapper);
+
+        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getIntent().getStringExtra("name"));
 
         m = (MainApplication) getApplicationContext();
+        storage = ItineraryStorage.newInstance(getFilesDir().getAbsolutePath() + "itinerary.json");
 
         mapDestination = (MapView) findViewById(R.id.mapDestination);
         txtDetails = (TextView) findViewById(R.id.txtDetails);
@@ -60,6 +78,7 @@ public class ViewDestinationActivity extends AppCompatActivity {
         txtPhotoTitle = (TextView) findViewById(R.id.txtPhotoTitle);
         txtEventTitle = (TextView) findViewById(R.id.txtEventTitle);
         lstEvents = (ListView) findViewById(R.id.lstEvents);
+        scrScroll = (ScrollView) findViewById(R.id.scrScroll);
 
         txtDetails.setText(getIntent().getStringExtra("details"));
 
@@ -68,6 +87,14 @@ public class ViewDestinationActivity extends AppCompatActivity {
         final String lat = getIntent().getStringExtra("lat");
         final String lon = getIntent().getStringExtra("lon");
 
+        scrScroll.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                float alpha = 255 * (scrollY / ((float) mapDestination.getHeight() - toolbar.getHeight()));
+                toolbar.getBackground().setAlpha(Math.min((int) alpha, 255));
+                Log.d("ViewDestinationActivity", alpha + " ");
+            }
+        });
         mapDestination.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
@@ -156,6 +183,11 @@ public class ViewDestinationActivity extends AppCompatActivity {
                             txtEventTitle.setVisibility(View.GONE);
                             return;
                         }
+                        else {
+                            DestinationEventAdapter adapter = new DestinationEventAdapter(events);
+                            lstEvents.setAdapter(adapter);
+                            setListViewHeightBasedOnChildren(lstEvents);
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -225,6 +257,21 @@ public class ViewDestinationActivity extends AppCompatActivity {
         if (id == android.R.id.home) {
             finish();
         }
+        else if(id == R.id.action_add_destination) {
+            Destination d = new Destination();
+            d.id = getIntent().getIntExtra("id", 0);
+            d.name = getIntent().getStringExtra("name");
+            d.details = getIntent().getStringExtra("details");
+            d.lat = getIntent().getStringExtra("lat");
+            d.lon = getIntent().getStringExtra("lon");
+
+            if(!storage.add(d)) {
+                Snackbar.make(findViewById(android.R.id.content), "Already added destination to itinerary", Snackbar.LENGTH_SHORT).show();
+            }
+            else {
+                Snackbar.make(findViewById(android.R.id.content), "Added destination to itinerary", Snackbar.LENGTH_SHORT).show();
+            }
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -237,4 +284,27 @@ public class ViewDestinationActivity extends AppCompatActivity {
         return true;
     }
 
+    public static void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter == null) {
+            // pre-condition
+            return;
+        }
+
+        int totalHeight = listView.getPaddingTop() + listView.getPaddingBottom();
+
+        for (int i = 0; i < listAdapter.getCount(); i++) {
+            View listItem = listAdapter.getView(i, null, listView);
+            if (listItem instanceof ViewGroup) {
+                listItem.setLayoutParams(new AbsListView.LayoutParams(AbsListView.LayoutParams.WRAP_CONTENT, AbsListView.LayoutParams.WRAP_CONTENT));
+            }
+
+            listItem.measure(0, 0);
+            totalHeight += listItem.getMeasuredHeight();
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        params.height = totalHeight + (listView.getDividerHeight() * (listAdapter.getCount() - 1));
+        listView.setLayoutParams(params);
+    }
 }
