@@ -90,8 +90,8 @@ public class ViewDestinationActivity extends AppCompatActivity {
         scrScroll.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
             public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                float alpha = 255 * (scrollY / ((float) mapDestination.getHeight() - toolbar.getHeight()));
-                toolbar.getBackground().setAlpha(Math.min((int) alpha, 255));
+                double alpha = 255 * (((scrollY / ((float) mapDestination.getHeight() - toolbar.getHeight()))));
+                toolbar.getBackground().setAlpha(Math.max(0, Math.min((int) alpha, 255)));
                 Log.d("ViewDestinationActivity", alpha + " ");
             }
         });

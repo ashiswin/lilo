@@ -3,6 +3,7 @@ package com.lilo.lilo;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.SupportActivity;
@@ -197,6 +198,22 @@ public class DestinationFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
+            if(((DestinationAdapter) adapter).data == null) return true;
+            JSONArray arr = ((DestinationAdapter) adapter).data;
+            JSONArray names = new JSONArray();
+
+            for(int i = 0; i < arr.length(); i++) {
+                try {
+                    JSONObject o = arr.getJSONObject(i);
+                    names.put(o);
+                    names.getJSONObject(i).remove("thumbnail");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            Intent searchIntent = new Intent(getActivity(), SearchActivity.class);
+            searchIntent.putExtra("destinations", names.toString());
+            startActivity(searchIntent);
             return true;
         }
         if (id == R.id.action_sort) {
