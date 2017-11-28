@@ -1,6 +1,7 @@
 package com.lilo.lilo;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,8 @@ import com.lilo.lilo.adapters.ItineraryAdapter;
 import com.lilo.lilo.model.Destination;
 import com.lilo.lilo.model.ItineraryStorage;
 
+import static android.app.Activity.RESULT_OK;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +28,7 @@ import com.lilo.lilo.model.ItineraryStorage;
  * create an instance of this fragment.
  */
 public class ItineraryFragment extends Fragment {
+    RecyclerView.Adapter adapter;
 
     public ItineraryFragment() {
         // Required empty public constructor
@@ -49,7 +53,7 @@ public class ItineraryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_itinerary, container, false);
 
         RecyclerView lstDestinations = (RecyclerView) rootView.findViewById(R.id.lstDestinations);
-        RecyclerView.Adapter adapter = new ItineraryAdapter(getActivity());
+        adapter = new ItineraryAdapter(getActivity());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lstDestinations.setLayoutManager(layoutManager);
 
@@ -66,7 +70,10 @@ public class ItineraryFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-
+        if(id == R.id.action_plan) {
+            Intent plannerIntent = new Intent(getActivity(), PlannerActivity.class);
+            startActivityForResult(plannerIntent, 0);
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -75,5 +82,13 @@ public class ItineraryFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         //super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.itinerary, menu);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 0 && resultCode == RESULT_OK) {
+            adapter.notifyDataSetChanged();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

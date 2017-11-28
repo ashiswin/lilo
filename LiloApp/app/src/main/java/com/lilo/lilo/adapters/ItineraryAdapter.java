@@ -17,6 +17,7 @@ import com.lilo.lilo.R;
 import com.lilo.lilo.ViewDestinationActivity;
 import com.lilo.lilo.model.Destination;
 import com.lilo.lilo.model.ItineraryStorage;
+import com.lilo.lilo.model.Route;
 
 /**
  * Created by ashis on 11/26/2017.
@@ -99,9 +100,17 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         else {
             DirectionViewHolder h = (DirectionViewHolder) holder;
-            h.txtTransport.setText("Walking");
-            h.txtTime.setText("Long");
-            h.txtCost.setText("-");
+            if(storage.routes == null || storage.routes.isEmpty()) {
+                h.txtTransport.setText("-");
+                h.txtTime.setText("-");
+                h.txtCost.setText("-");
+            }
+            else {
+                Route r = storage.routes.get(position / 2);
+                h.txtTransport.setText(r.transport);
+                h.txtTime.setText(r.time + " mins");
+                h.txtCost.setText("$" + r.cost);
+            }
         }
     }
 

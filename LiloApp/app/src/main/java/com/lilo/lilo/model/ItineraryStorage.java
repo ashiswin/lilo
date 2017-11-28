@@ -27,6 +27,8 @@ public class ItineraryStorage {
     public ArrayList<Destination> destinations;
     public ArrayList<Route> routes;
 
+    public Destination start;
+
     public ItineraryAdapter adapter;
     String filename;
 

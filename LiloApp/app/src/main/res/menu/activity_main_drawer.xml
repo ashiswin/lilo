@@ -10,10 +10,6 @@
             android:id="@+id/nav_itinerary"
             android:icon="@drawable/ic_list_black_24dp"
             android:title="Itinerary" />
-        <item
-            android:id="@+id/nav_planner"
-            android:icon="@drawable/ic_directions_black_24dp"
-            android:title="Planner" />
     </group>
 
     <group>

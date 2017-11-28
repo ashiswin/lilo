@@ -32,7 +32,8 @@
         <activity
             android:name=".ViewDestinationActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".SearchActivity"></activity>
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".PlannerActivity"></activity>
     </application>
 
 </manifest>
