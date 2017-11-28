@@ -1,0 +1,9 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreferenceCompat
+        android:key="prefSolver"
+        android:title="Fast Route Solver"
+        android:summaryOn="Using fast route planner"
+        android:summaryOff="Using slow route planner" />
+
+</PreferenceScreen>

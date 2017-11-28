@@ -1,7 +1,9 @@
 package com.lilo.lilo;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -102,6 +104,9 @@ public class PlannerActivity extends AppCompatActivity {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
+                                            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(PlannerActivity.this);
+                                            boolean useFastSolver = preferences.getBoolean("prefSolver", false);
+
                                             // TODO: Perform planning and cancel dialog
 
                                             // Code that should run when planning is complete

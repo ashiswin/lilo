@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     MainApplication m;
     DestinationFragment destinationFragment;
     ItineraryFragment itineraryFragment;
+    SettingsFragment settingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +99,16 @@ public class MainActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.lytContent, itineraryFragment).commit();
 
             getSupportActionBar().setTitle("Itinerary");
+        }
+        else if(id == R.id.nav_settings) {
+            if(settingsFragment == null) {
+                settingsFragment = SettingsFragment.newInstance();
+            }
+
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.lytContent, settingsFragment).commit();
+
+            getSupportActionBar().setTitle("Settings");
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
