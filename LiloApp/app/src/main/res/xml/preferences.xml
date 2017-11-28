@@ -6,4 +6,9 @@
         android:summaryOn="Using fast route planner"
         android:summaryOff="Using slow route planner" />
 
+    <SwitchPreferenceCompat
+        android:key="prefOffline"
+        android:title="Offline Mode"
+        android:summary="Disable photo stream loading for no-data setups" />
+
 </PreferenceScreen>

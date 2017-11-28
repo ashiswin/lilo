@@ -1,9 +1,11 @@
 package com.lilo.lilo;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
@@ -132,30 +134,40 @@ public class ViewDestinationActivity extends AppCompatActivity {
                             sources[i] = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                         }
 
-                        adapter = new DestinationSlideshowAdapter(sources, ViewDestinationActivity.this);
-                        pgrSlideshow.setAdapter(adapter);
+                        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ViewDestinationActivity.this);
+                        if(!preferences.getBoolean("prefOffline", false)) {
+                            adapter = new DestinationSlideshowAdapter(sources, ViewDestinationActivity.this);
+                            pgrSlideshow.setAdapter(adapter);
 
-                        btnLeftNav.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                int tab = pgrSlideshow.getCurrentItem();
-                                if (tab > 0) {
-                                    tab--;
-                                    pgrSlideshow.setCurrentItem(tab);
-                                } else if (tab == 0) {
+                            btnLeftNav.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    int tab = pgrSlideshow.getCurrentItem();
+                                    if (tab > 0) {
+                                        tab--;
+                                        pgrSlideshow.setCurrentItem(tab);
+                                    } else if (tab == 0) {
+                                        pgrSlideshow.setCurrentItem(tab);
+                                    }
+                                }
+                            });
+
+                            btnRightNav.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    int tab = pgrSlideshow.getCurrentItem();
+                                    tab++;
                                     pgrSlideshow.setCurrentItem(tab);
                                 }
-                            }
-                        });
-
-                        btnRightNav.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                int tab = pgrSlideshow.getCurrentItem();
-                                tab++;
-                                pgrSlideshow.setCurrentItem(tab);
-                            }
-                        });
+                            });
+                        }
+                        else {
+                            pgrSlideshow.setVisibility(View.GONE);
+                            btnLeftNav.setVisibility(View.GONE);
+                            btnRightNav.setVisibility(View.GONE);
+                            txtPhotoTitle.setVisibility(View.GONE);
+                            return;
+                        }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
