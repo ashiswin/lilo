@@ -117,6 +117,7 @@ public class PlannerActivity extends AppCompatActivity {
                                             // TODO: Perform planning and cancel dialog
                                             Parser parser = new Parser(getApplicationContext());
                                             ItineraryStorage storage = PlannerActivity.this.storage;
+                                            //DELETE THIS SLEEP THING
                                             try {
                                                 Thread.sleep(5000);
                                             } catch (InterruptedException e) {
@@ -129,8 +130,8 @@ public class PlannerActivity extends AppCompatActivity {
                                             }
 
                                             List<double[]> solution;
-                                            if (false){
-                                                //TODO: add in max price
+                                            if (useFastSolver){
+
                                                 FastSolver solver = new FastSolver(start,locationlist,10);
                                                 solver.run(start);
                                                 solution = solver.solution;
@@ -160,11 +161,6 @@ public class PlannerActivity extends AppCompatActivity {
                                             Log.d("" + totaltime/60,"" + totalprice);
 
 
-
-                                            //TODO: Run solver
-                                            //TODO: convert listlocation back to listdestination
-                                            //TODO: convert edges to paths
-                                            //TODO: update storage
                                             // Code that should run when planning is complete
                                              runOnUiThread(new Runnable() {
                                                   @Override
