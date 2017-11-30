@@ -18,13 +18,20 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.lilo.lilo.adapters.DestinationAdapter;
+import com.lilo.lilo.itineraryplanner.BruteSolver;
+import com.lilo.lilo.itineraryplanner.FastSolver;
+import com.lilo.lilo.itineraryplanner.Location;
+import com.lilo.lilo.itineraryplanner.Parser;
 import com.lilo.lilo.model.Destination;
 import com.lilo.lilo.model.ItineraryStorage;
+import com.lilo.lilo.model.Route;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class PlannerActivity extends AppCompatActivity {
     MainApplication m;
@@ -108,16 +115,65 @@ public class PlannerActivity extends AppCompatActivity {
                                             boolean useFastSolver = preferences.getBoolean("prefSolver", false);
 
                                             // TODO: Perform planning and cancel dialog
+                                            Parser parser = new Parser(getApplicationContext());
+                                            ItineraryStorage storage = PlannerActivity.this.storage;
+                                            try {
+                                                Thread.sleep(5000);
+                                            } catch (InterruptedException e) {
+                                                e.printStackTrace();
+                                            }
+                                            List<Location> locationlist = parser.converter(storage.destinations,storage.start);
+                                            Location start = locationlist.remove(0);
+                                            for (Location d : locationlist){
+                                                Log.d(d.name + " " + d.locationID,"DESTINATION PATH");
+                                            }
 
+                                            List<double[]> solution;
+                                            if (false){
+                                                //TODO: add in max price
+                                                FastSolver solver = new FastSolver(start,locationlist,10);
+                                                solver.run(start);
+                                                solution = solver.solution;
+                                            } else {
+                                                BruteSolver solver = new BruteSolver(start,locationlist,10);
+                                                solver.run(start);
+                                                solution = solver.solution;
+                                            }
+                                            
+                                            storage.routes = parser.edgesToRoute(solution);
+                                            storage.destinations = parser.edgesToDestination(solution,storage.destinations);
+
+                                            for (double[] e : solution){
+                                                Log.d(Arrays.toString(e),"PATH");
+                                            }
+                                            for (Destination d : storage.destinations){
+                                                Log.d(d.name + " " + d.id,"DESTINATION PATH");
+                                            }
+                                            int totaltime = 0;
+                                            double totalprice = 0;
+                                            for (Route r : storage.routes){
+                                                totaltime += r.time;
+                                                totalprice += r.cost;
+                                                Log.d("" + r.transport + "" + r.cost + "" + r.time,"ROUTES" );
+                                            }
+
+                                            Log.d("" + totaltime/60,"" + totalprice);
+
+
+
+                                            //TODO: Run solver
+                                            //TODO: convert listlocation back to listdestination
+                                            //TODO: convert edges to paths
+                                            //TODO: update storage
                                             // Code that should run when planning is complete
-//                                            runOnUiThread(new Runnable() {
-//                                                @Override
-//                                                public void run() {
-//                                                    dialog.cancel();
-//                                                    setResult(RESULT_OK);
-//                                                    finish();
-//                                                }
-//                                            });
+                                             runOnUiThread(new Runnable() {
+                                                  @Override
+                                                  public void run() {
+                                                      dialog.cancel();
+                                                      setResult(RESULT_OK);
+                                                      finish();
+                                                  }
+                                              });
                                         }
                                     }).start();
                                 } catch (JSONException e) {
