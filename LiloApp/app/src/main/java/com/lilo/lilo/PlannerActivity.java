@@ -125,9 +125,6 @@ public class PlannerActivity extends AppCompatActivity {
                                             }
                                             List<Location> locationlist = parser.converter(storage.destinations,storage.start);
                                             Location start = locationlist.remove(0);
-                                            for (Location d : locationlist){
-                                                Log.d(d.name + " " + d.locationID,"DESTINATION PATH");
-                                            }
 
                                             List<double[]> solution;
                                             if (useFastSolver){
@@ -144,21 +141,6 @@ public class PlannerActivity extends AppCompatActivity {
                                             storage.routes = parser.edgesToRoute(solution);
                                             storage.destinations = parser.edgesToDestination(solution,storage.destinations);
 
-                                            for (double[] e : solution){
-                                                Log.d(Arrays.toString(e),"PATH");
-                                            }
-                                            for (Destination d : storage.destinations){
-                                                Log.d(d.name + " " + d.id,"DESTINATION PATH");
-                                            }
-                                            int totaltime = 0;
-                                            double totalprice = 0;
-                                            for (Route r : storage.routes){
-                                                totaltime += r.time;
-                                                totalprice += r.cost;
-                                                Log.d("" + r.transport + "" + r.cost + "" + r.time,"ROUTES" );
-                                            }
-
-                                            Log.d("" + totaltime/60,"" + totalprice);
 
 
                                             // Code that should run when planning is complete
