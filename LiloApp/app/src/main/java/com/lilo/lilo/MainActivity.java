@@ -1,9 +1,11 @@
 package com.lilo.lilo;
 
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -118,6 +120,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        if(!preferences.getBoolean("prefPatriotism", false)) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        }
+        else {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryPatriot)));
+        }
     }
 }

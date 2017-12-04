@@ -3,6 +3,7 @@ package com.lilo.lilo;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
@@ -68,6 +69,14 @@ public class ViewDestinationActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getIntent().getStringExtra("name"));
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ViewDestinationActivity.this);
+        if(!preferences.getBoolean("prefPatriotism", false)) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        }
+        else {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryPatriot)));
+        }
 
         m = (MainApplication) getApplicationContext();
         storage = ItineraryStorage.newInstance(ViewDestinationActivity.this);

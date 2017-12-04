@@ -10,5 +10,9 @@
         android:key="prefOffline"
         android:title="Offline Mode"
         android:summary="Disable photo stream loading for no-data setups" />
+    <SwitchPreferenceCompat
+        android:key="prefPatriotism"
+        android:title="Patriot Mode"
+        android:summary="Enable patriot mode for more Singapore-y feels" />
 
 </PreferenceScreen>

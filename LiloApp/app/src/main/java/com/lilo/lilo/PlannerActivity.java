@@ -196,6 +196,12 @@ public class PlannerActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(PlannerActivity.this);
+        if(!preferences.getBoolean("prefPatriotism", false)) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        }
+        else {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryPatriot)));
+        }
     }
 }

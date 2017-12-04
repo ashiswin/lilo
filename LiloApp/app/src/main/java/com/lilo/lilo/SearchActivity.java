@@ -1,7 +1,9 @@
 package com.lilo.lilo;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -101,7 +103,14 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(SearchActivity.this);
+        if(!preferences.getBoolean("prefPatriotism", false)) {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        }
+        else {
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimaryPatriot)));
+        }
     }
 
     @Override
