@@ -59,7 +59,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             layout.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    if(position / 2 == storage.destinations.size() || (storage.start != null && position / 2 == 0)) {
+                    if(position / 2 == storage.destinations.size()) {
                         return false;
                     }
                     final Destination d = storage.destinations.get(position / 2);

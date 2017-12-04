@@ -57,6 +57,8 @@ public class ItineraryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_itinerary, container, false);
 
         RecyclerView lstDestinations = (RecyclerView) rootView.findViewById(R.id.lstDestinations);
+        TextView txtNoDestinations = (TextView) rootView.findViewById(R.id.txtNoDestinations);
+
         txtStart = (TextView) rootView.findViewById(R.id.txtStart);
         viwCard = rootView.findViewById(R.id.viwCard);
 
@@ -73,6 +75,15 @@ public class ItineraryFragment extends Fragment {
         }
         else {
             viwCard.setVisibility(View.GONE);
+        }
+
+        if(storage.destinations.size() == 0) {
+            lstDestinations.setVisibility(View.GONE);
+            txtNoDestinations.setVisibility(View.VISIBLE);
+        }
+        else {
+            lstDestinations.setVisibility(View.VISIBLE);
+            txtNoDestinations.setVisibility(View.GONE);
         }
 
         return rootView;
