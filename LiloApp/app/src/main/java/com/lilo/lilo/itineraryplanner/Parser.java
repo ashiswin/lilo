@@ -30,6 +30,10 @@ public class Parser {
     double[][][] bus;
     double[][][] walk;
 
+    int valuesParsed;
+
+    ParserCompleteListener listener;
+
 
     public List<Location> converter(ArrayList<Destination> dest, Destination start){
 
@@ -65,9 +69,12 @@ public class Parser {
         return locations;
     }
 
-
+    public void setParserCompleteListener(ParserCompleteListener listener) {
+        this.listener = listener;
+    }
 
     public Parser(Context context) {
+        valuesParsed = 0;
         MainApplication m = (MainApplication) context.getApplicationContext();
 
         StringRequest taxi = new StringRequest(Request.Method.POST,m.SERVER_URL + "/taxi.txt", new Response.Listener<String>() {
@@ -79,7 +86,11 @@ public class Parser {
                     double[][][] e = stringToArray(response);
 
                     Parser.this.taxi = e;
+                    valuesParsed++;
 
+                    if(valuesParsed == 3 && listener != null) {
+                        listener.onComplete(Parser.this);
+                    }
                 } catch (Exception e){
                 }
             }
@@ -97,6 +108,11 @@ public class Parser {
                 try{
                     double[][][] e = stringToArray(response);
                     Parser.this.bus = e;
+                    valuesParsed++;
+
+                    if(valuesParsed == 3 && listener != null) {
+                        listener.onComplete(Parser.this);
+                    }
                 } catch (Exception e){
                 }
             }
@@ -115,6 +131,11 @@ public class Parser {
                 try{
                     double[][][] e = stringToArrayWalk(response);
                     Parser.this.walk = e;
+                    valuesParsed++;
+
+                    if(valuesParsed == 3 && listener != null) {
+                        listener.onComplete(Parser.this);
+                    }
                 } catch (Exception e){
                 }
             }
@@ -211,5 +232,7 @@ public class Parser {
         return result;
     }
 
-
+    public interface ParserCompleteListener {
+        void onComplete(Parser parser);
+    }
 }

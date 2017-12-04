@@ -70,7 +70,7 @@ public class ViewDestinationActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(getIntent().getStringExtra("name"));
 
         m = (MainApplication) getApplicationContext();
-        storage = ItineraryStorage.newInstance(getFilesDir().getAbsolutePath() + "itinerary.json");
+        storage = ItineraryStorage.newInstance(ViewDestinationActivity.this);
 
         mapDestination = (MapView) findViewById(R.id.mapDestination);
         txtDetails = (TextView) findViewById(R.id.txtDetails);

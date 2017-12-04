@@ -14,6 +14,13 @@
         android:hint="Starting point"
         android:layout_marginRight="8dp"
         android:layout_marginLeft="8dp"/>
+    <EditText
+        android:id="@+id/edtBudget"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="8dp"
+        android:inputType="numberDecimal"
+        android:hint="Budget"/>
     <Button
         android:id="@+id/btnStart"
         android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 package com.lilo.lilo.model;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.lilo.lilo.adapters.ItineraryAdapter;
@@ -34,9 +35,9 @@ public class ItineraryStorage {
 
     private static ItineraryStorage instance;
 
-    public static ItineraryStorage newInstance(String filename) {
+    public static ItineraryStorage newInstance(Context context) {
         if(instance == null) {
-            instance = new ItineraryStorage(filename);
+            instance = new ItineraryStorage(context.getFilesDir() + "/itinerary.json");
         }
 
         return instance;
@@ -58,7 +59,8 @@ public class ItineraryStorage {
                 sb.append(line);
             }
 
-            JSONArray arr = new JSONArray(sb.toString());
+            JSONObject itineraryStuff = new JSONObject(sb.toString());
+            JSONArray arr = itineraryStuff.getJSONArray("itinerary");
 
             for(int i = 0; i < arr.length(); i++) {
                 JSONObject o = arr.getJSONObject(i);
@@ -68,11 +70,36 @@ public class ItineraryStorage {
                 d.id = o.getInt("id");
                 d.name = o.getString("name");
                 d.details = o.getString("details");
+                d.lat = o.getString("lat");
+                d.lon = o.getString("lon");
 
                 destinationIds.add(d.id);
                 destinations.add(d);
             }
 
+            arr = itineraryStuff.getJSONArray("routes");
+
+            for(int i = 0; i < arr.length(); i++) {
+                JSONObject o = arr.getJSONObject(i);
+
+                Route r = new Route();
+
+                r.cost = o.getDouble("cost");
+                r.time = o.getInt("time");
+                r.transport = o.getString("transport");
+
+                routes.add(r);
+            }
+
+            JSONObject s = itineraryStuff.getJSONObject("start");
+            if(s.getInt("id") != -1) {
+                start = new Destination();
+                start.id = s.getInt("id");
+                start.name = s.getString("name");
+                start.details = s.getString("details");
+                start.lat = s.getString("lat");
+                start.lon = s.getString("lon");
+            }
             reader.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -85,7 +112,7 @@ public class ItineraryStorage {
     }
 
     public boolean add(Destination d) {
-        if(destinationIds.contains(d.id)) return false;
+        if(destinationIds.contains(d.id) || (start != null && start.id == d.id)) return false;
 
         destinationIds.add(d.id);
         destinations.add(d);
@@ -106,7 +133,7 @@ public class ItineraryStorage {
         store();
     }
 
-    private void store() {
+    public void store() {
         JSONArray arr = new JSONArray();
         for(Destination de : destinations) {
             JSONObject o = new JSONObject();
@@ -114,6 +141,8 @@ public class ItineraryStorage {
                 o.put("id", de.id);
                 o.put("name", de.name);
                 o.put("details", de.details);
+                o.put("lat", de.lat);
+                o.put("lon", de.lon);
             } catch(JSONException e) {
                 e.printStackTrace();
             }
@@ -121,9 +150,46 @@ public class ItineraryStorage {
             arr.put(o);
         }
 
+        JSONArray routeArr = new JSONArray();
+        for(Route r : routes) {
+            JSONObject o = new JSONObject();
+            try {
+                o.put("cost", r.cost);
+                o.put("time", r.time);
+                o.put("transport", r.transport);
+            } catch(JSONException e) {
+                e.printStackTrace();
+            }
+
+            routeArr.put(o);
+        }
+
+        JSONObject s = new JSONObject();
+        try {
+            if (start != null) {
+                s.put("id", start.id);
+                s.put("name", start.name);
+                s.put("details", start.details);
+                s.put("lat", start.lat);
+                s.put("lon", start.lon);
+            }
+            else {
+                s.put("id", -1);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        JSONObject o = new JSONObject();
+        try {
+            o.put("itinerary", arr);
+            o.put("routes", routeArr);
+            o.put("start", s);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
         try {
             BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
-            writer.write(arr.toString());
+            writer.write(o.toString());
             writer.flush();
             writer.close();
             Log.d("ItineraryStorage", arr.toString());

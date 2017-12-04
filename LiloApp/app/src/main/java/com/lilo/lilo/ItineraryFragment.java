@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.lilo.lilo.adapters.ItineraryAdapter;
 import com.lilo.lilo.model.Destination;
@@ -29,6 +30,9 @@ import static android.app.Activity.RESULT_OK;
  */
 public class ItineraryFragment extends Fragment {
     RecyclerView.Adapter adapter;
+    ItineraryStorage storage;
+    TextView txtStart;
+    View viwCard;
 
     public ItineraryFragment() {
         // Required empty public constructor
@@ -53,11 +57,23 @@ public class ItineraryFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_itinerary, container, false);
 
         RecyclerView lstDestinations = (RecyclerView) rootView.findViewById(R.id.lstDestinations);
+        txtStart = (TextView) rootView.findViewById(R.id.txtStart);
+        viwCard = rootView.findViewById(R.id.viwCard);
+
         adapter = new ItineraryAdapter(getActivity());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         lstDestinations.setLayoutManager(layoutManager);
 
         lstDestinations.setAdapter(adapter);
+        storage = ItineraryStorage.newInstance(getActivity());
+
+        if(storage.start != null) {
+            viwCard.setVisibility(View.VISIBLE);
+            txtStart.setText(storage.start.name);
+        }
+        else {
+            viwCard.setVisibility(View.GONE);
+        }
 
         return rootView;
     }
@@ -88,6 +104,15 @@ public class ItineraryFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode == 0 && resultCode == RESULT_OK) {
             adapter.notifyDataSetChanged();
+            if(storage.start != null) {
+                viwCard.setVisibility(View.VISIBLE);
+                txtStart.setText(storage.start.name);
+            }
+            else {
+                viwCard.setVisibility(View.GONE);
+            }
+
+            storage.store();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

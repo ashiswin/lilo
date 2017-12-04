@@ -1,9 +1,11 @@
 package com.lilo.lilo.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Base64;
 import android.view.LayoutInflater;
@@ -53,6 +55,36 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                     context.startActivity(viewDestinationIntent);
                 }
             });
+
+            layout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if(position / 2 == storage.destinations.size() || (storage.start != null && position / 2 == 0)) {
+                        return false;
+                    }
+                    final Destination d = storage.destinations.get(position / 2);
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(layout.getContext());
+                    builder.setTitle("Delete destination");
+                    builder.setMessage("Delete this destination from your itinerary?");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            storage.remove(d);
+                            notifyDataSetChanged();
+                            dialog.cancel();
+                        }
+                    }).setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+
+                    return true;
+                }
+            });
         }
     }
 
@@ -71,7 +103,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
     public ItineraryAdapter(Context context) {
-        this.storage = ItineraryStorage.newInstance(context.getFilesDir() + "itinerary.json");
+        this.storage = ItineraryStorage.newInstance(context);
         this.context = context;
     }
 
@@ -94,7 +126,13 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(position % 2 == 1) {
             ViewHolder h = (ViewHolder) holder;
-            Destination d = storage.destinations.get(position / 2);
+            Destination d;
+            if(position / 2 == storage.destinations.size()) {
+                d = storage.start;
+            }
+            else {
+                d = storage.destinations.get((position / 2));
+            }
             h.txtName.setText(d.name);
             h.position = position;
         }
@@ -106,9 +144,9 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 h.txtCost.setText("-");
             }
             else {
-                Route r = storage.routes.get(position / 2);
+                Route r = storage.routes.get((position / 2));
                 h.txtTransport.setText(r.transport);
-                h.txtTime.setText(r.time + " mins");
+                h.txtTime.setText((r.time / 60) + " mins");
                 h.txtCost.setText("$" + r.cost);
             }
         }
@@ -116,7 +154,7 @@ public class ItineraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
-        return storage.destinations.size() * 2 + 1;
+        return storage.destinations.size() * 2 + 1 + ((storage.start == null) ? 0 : 1);
     }
 
     @Override

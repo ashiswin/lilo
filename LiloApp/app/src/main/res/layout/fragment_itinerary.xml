@@ -1,9 +1,24 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.lilo.lilo.ItineraryFragment">
-
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/viwCard"
+        android:layout_margin="16dp"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/txtStart"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:gravity="center"
+            android:textAppearance="?android:textAppearanceLarge"/>
+    </android.support.v7.widget.CardView>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/lstDestinations"
         android:layout_width="match_parent"
@@ -11,4 +26,4 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"/>
 
-</FrameLayout>
+</LinearLayout>
